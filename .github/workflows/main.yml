@@ -2,8 +2,8 @@ Name: proyecto-Julio
 
 on: 
 
-     push:
-     workflow_dispatch:
+  push:
+  workflow_dispatch:
 
  jobs:
 
