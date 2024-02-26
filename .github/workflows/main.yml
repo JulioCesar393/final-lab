@@ -1,22 +1,21 @@
-name: julio33
+Name: proyecto-Julio
 
-on:
+on: 
 
-        Push:
-        workflow_dispatch:
+     push:
+     workflow_dispatch:
 
 jobs:
 
-  build:
+    build:  
 
-     runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
 
-     steps:
+        steps:
 
-         - uses: actions/checkout@v3
+          - uses: actions/checkout@v3
 
-         - name: Run a multi-line script
-            run: |
+          - name: Run a multi-line script 
+             run: |
                echo "hola mundo"
-
-
+              
