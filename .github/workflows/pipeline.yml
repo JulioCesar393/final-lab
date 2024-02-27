@@ -36,8 +36,8 @@ jobs:
     
     #Tokens de Seguridad
     env:
-      GITHUB_TOKEN: ${{ secrets.TOKENSEGURIDAD }}
-      SONAR_TOKEN: ${{ secrets.TOKENSEGURIDAD }}
+      GITHUB_TOKEN: ${{ TOKEN33 }}
+      SONAR_TOKEN: ${{ TOKEN33 }}
 #Integracion SCA
  SCA_DependencyCheck:
   runs-on: ubuntu-latest
