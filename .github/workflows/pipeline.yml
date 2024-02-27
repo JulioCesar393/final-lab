@@ -86,7 +86,7 @@ jobs:
      uses: docker/login-action@v3.0.0
      with:
 	jobs:
-     run: docker push mrcuraqueo/final-lab:latest
+     run: docker push JulioCesar393/final-lab:latest
 
 
 
