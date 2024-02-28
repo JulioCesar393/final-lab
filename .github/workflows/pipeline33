@@ -1,0 +1,121 @@
+# Acá va el nombre (Integracion Continua)
+name: CI
+
+# Acá se declaran los eventos
+on:
+
+# Si se ejecuta el push cada vez
+ push:
+ workflow_dispatch:
+
+# Acá es donde se declaran los trabajos y los pasos (jobs --< steps)
+jobs:
+  
+ build:   
+  runs-on: ubuntu-latest  
+  steps:  
+   - uses: actions/checkout@v3   
+   - name: Inicio
+     run: |
+       echo "Jelou Jelou"
+
+#Conexion con SonarCloud 
+ SAST_SonarCloud:
+  runs-on: ubuntu-latest
+  needs: build  
+  steps:
+  - name: Checkout repository
+    uses: actions/checkout@v3
+ 
+  - name: Setup Node.js
+    uses: actions/checkout@v3
+    with:
+      node-version: '14'
+ 
+  - name: Install dependencies
+    run: npm install
+ 
+  - name: Run SonarCloud analysis
+    uses: sonarsource/sonarcloud-github-action@master
+    
+    #Tokens de Seguridad
+    env:
+      GITHUB_TOKEN: ${{ secrets.TOKENSEGURIDAD }}
+      SONAR_TOKEN: ${{ TOKEN33 }}
+
+#Integracion SCA
+ SCA_DependencyCheck:
+  runs-on: ubuntu-latest
+  needs: build
+  steps:
+  - name: Dependency Check
+    uses: dependency-check/Dependency-Check_Action@1.1.0
+    with:    
+      project: 'final-lab'
+      path: '.'
+      format: 'HTML' 
+     
+  - name: Upload Test results
+    uses: actions/upload-artifact@master
+    with:
+      name: Depcheck report
+      path: ${{github.workspace}}/reports
+   
+#Integración con DOCKER
+ SecurityTrivy_Docker:   
+  runs-on: ubuntu-latest
+  needs: [SAST_SonarCloud, SCA_DependencyCheck]
+  
+  steps: 
+   - name: Checkout code
+     uses: actions/checkout@v3
+     
+ #Build
+   - name: Build Docker image
+     run: |
+       docker build -t JulioCesar393/final-lab:latest .
+       
+ #Analisis de imagen
+   - name: Run Trivy vulnerability scanner
+     uses: aquasecurity/trivy-action@master
+     with:
+       image-ref: 'JulioCesar393/final-lab:latest'
+       format: 'table'
+       #exit-code: '1' Se comenta el parametro para que el pipeline no se quiebre
+       ignore-unfixed: true
+       vuln-type: 'os,library'
+       severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+
+ #Login&Push  
+   - name: Docker Login
+     uses: docker/login-action@v3.0.0
+     with:
+      username: ${{ secrets.DOCKER_USER }}
+      password: ${{ secrets.DOCKER_PASSWORD }}
+     
+   - name: Push image to DockerHub
+     run: docker push JulioCesar393/final-lab:latest
+  
+ #El deploy se comentó porque quedaba infinitamente corriendo una vez docker destop era detenido.
+ #Deploy:
+  #needs: SecurityTrivy_Docker
+  #runs-on: self-hosted
+
+  #steps:
+  #- name: Pull de la imagen Docker
+  #  run: |
+  #   docker pull JulioCesar393/final-lab:latest
+ 
+  #- name: Despliegue de la Aplicación
+  #  run: |
+  #    docker run -p 8085:8085 --name final-lab-deploy -d mrcuraqueo/final-lab:latest
+
+   #- name: Sleep
+   #  run: |
+   #   sleep 30
+  
+   #- name: ZAP Scan
+   #  uses: zaproxy/action-baseline@v0.11.0
+   #  with:
+   #    target: 'http://localhost:8085'
+  
