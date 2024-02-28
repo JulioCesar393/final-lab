@@ -81,13 +81,4 @@ jobs:
        vuln-type: 'os,library'
        severity: 'CRITICAL,HIGH,MEDIUM,LOW'
 
- #Login&Push  
-   - name: Docker Login
-     uses: docker/login-action@v3.0.0
-     with:
-	jobs:
-     run: docker push JulioCesar393/final-lab:latest
 
-
-
-  #Despliegue analisis de DAST
